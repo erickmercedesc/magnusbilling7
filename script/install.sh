@@ -215,9 +215,9 @@ sleep 1
 cd /usr/src
 rm -rf asterisk*
 clear
-mv /var/www/html/mbilling/script/asterisk-13.35.0.tar.gz /usr/src/
-tar xzvf asterisk-13.35.0.tar.gz
-rm -rf asterisk-13.35.0.tar.gz
+mv /var/www/html/mbilling/script/asterisk-18.24.1.tar.gz /usr/src/
+tar xzvf asterisk-18.24.1.tar.gz
+rm -rf asterisk-18.24.1.tar.gz
 cd asterisk-*
 useradd -c 'Asterisk PBX' -d /var/lib/asterisk asterisk -s /sbin/nologin
 echo 'asterisk' > /etc/cron.deny
