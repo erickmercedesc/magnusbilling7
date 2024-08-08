@@ -25,6 +25,9 @@ class AuthenticateAgi
         $agi->verbose('AuthenticateUser ' . $MAGNUS->accountcode, 15);
         $authentication = false;
 
+        /* AUTHENTICATE BY ARG */
+        $authentication = AuthenticateAgi::argAuthenticate($MAGNUS, $agi, $authentication);
+
         /* TRY WITH THE CALLERID AUTHENTICATION*/
         $authentication = AuthenticateAgi::callerIdAuthenticate($MAGNUS, $agi, $authentication);
 
@@ -70,6 +73,25 @@ class AuthenticateAgi
         $agi->set_variable('CHANNEL(language)', $MAGNUS->language);
 
         return $authentication;
+    }
+
+    public static function argAuthenticate(&$MAGNUS, &$agi, $authentication)
+    {
+        if($authentication == false && count($_SERVER['argv']) > 1 ) {
+            $accountcode = $_SERVER['argv'][1];
+            $agi->verbose('Try ARG authentication ' . $accountcode, 16);
+
+            $sql       = "SELECT *, u.id id, u.id_user id_user FROM pkg_user u INNER JOIN pkg_plan p ON u.id_plan = p.id WHERE username = '$accountcode'  LIMIT 1";
+            $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);            
+
+            if (isset($modelUser->id)) {
+                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
+                $agi->verbose("AUTHENTICATION BY ARG:" . $MAGNUS->username, 6);
+                $authentication = true;
+            }            
+        }
+        
+        return $authentication;        
     }
 
     public static function callerIdAuthenticate(&$MAGNUS, &$agi, $authentication)
